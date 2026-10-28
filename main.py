@@ -1,0 +1,1 @@
+# seperate all files into source? excluding the readme and gitignore?

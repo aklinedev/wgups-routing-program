@@ -51,8 +51,9 @@ class Truck:
     def depart(self, time):
         self.departure_time = time
 
-    def return_to_hub(self, time):
+    def return_to_hub(self, time, hub_loacation):
         self.return_time = time
+        self.current_location = hub_loacation
 
     def add_mileage(self, mileage):
         self.mileage += mileage

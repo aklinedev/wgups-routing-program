@@ -50,3 +50,12 @@ class Package:
         self.assigned_truck = assigned_truck
         self.departure_time = departure_time
         self.delivered_time = delivered_time
+
+    def mark_en_route(self, time):
+        self.status = PackageStatus.EN_ROUTE
+        self.departure_time = time
+        
+    def mark_delivered(self, time):
+        self.status = PackageStatus.DELIVERED
+        self.delivered_time = time
+        

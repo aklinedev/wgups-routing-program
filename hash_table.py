@@ -1,5 +1,7 @@
 from chain_node import Chain_Node
 
+# For my custom hash table, I chose to use chaining for handling 
+# collisions ; which is why im using it to store my custom chain nodes.
 class HashTable:
     def __init__(self, size):
         self.size = size
@@ -13,13 +15,12 @@ class HashTable:
         hashed_key = key % self.size
         return hashed_key
 
+
     def insert(self, key, value):
         index = self.custom_hash(key)
         head_node = self.table[index]
-
         # Check if a node with the same key exist. If it does
         # we will update its value.
-
         current = head_node
         while current:
             if current.key == key:
@@ -45,6 +46,7 @@ class HashTable:
 
         return None
 
+
     def remove(self, key):
         index = self.custom_hash(key)
         head_node = self.table[index]
@@ -66,7 +68,11 @@ class HashTable:
             previous = current
             current = current.next
 
+
     def resize(self):
+        # Create the reference to the table before making it 
+        # bigger. Then we will re-distribute the objects to the new
+        # sized hash table.
         old_table = self.table
 
         new_size = self.size * 2
