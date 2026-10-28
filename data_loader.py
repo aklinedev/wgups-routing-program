@@ -58,7 +58,7 @@ def _parse_special_notes(package):
         time_string = package.special_note.split("until ")[1]
         package.available_at = _time_to_minutes(time_string)
 
-    # Must be delivered with x,y, detected by the string "Must be delivered with".
+    # Must be delivered with x,y,...,z detected by the string "Must be delivered with".
     # Extracts the package IDs listed after "with", separated by commas
     elif "Must be delivered with" in package.special_note:
         delivered_with = package.special_note.split("with ")[1]
@@ -75,3 +75,38 @@ def _time_to_minutes(time_string):
     parsed_time = datetime.strptime(time_string.strip(), "%I:%M %p")
     return parsed_time.hour * 60 + parsed_time.minute
 
+# This returns two objects, one containing the mapping of addresses to indices.
+# The other is a distance matrix that takes two indices and gives you back the distance.
+def load_distance_data(file_path):
+    address_count = 0
+    address_mapping = {}
+    workbook = load_workbook(file_path)
+    sheet = workbook["Sheet1"]
+    rows = sheet.iter_rows(
+        min_row=9,
+        max_row=35,
+        min_col=2,
+        max_col=2,
+        values_only=True
+)
+    for row in rows:
+        address = row[0].split("\n")[0].strip()
+        address_mapping[address] = address_count
+        address_count += 1
+
+    distance_matrix = [[None] * address_count for _ in range(address_count)]
+    rows2 = sheet.iter_rows(
+        min_row=9,
+        max_row=35,
+        min_col=3,
+        max_col=29,
+        values_only=True
+)
+    for row_index, row in enumerate(rows2):
+        for column_index, distance in enumerate(row):
+            if distance is not None:
+                distance = round(distance, 1)
+                distance_matrix[row_index][column_index] = distance
+                distance_matrix[column_index][row_index] = distance
+
+    return address_mapping, distance_matrix
