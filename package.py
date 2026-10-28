@@ -25,8 +25,7 @@ class Package:
         grouped_with=None,
         required_truck=None,
         available_at=None,
-        corrected_address=None,
-        corrected_zip_code=None,
+        address_is_valid=True,
         assigned_truck=None,
         departure_time=None,
         delivered_time=None
@@ -44,8 +43,8 @@ class Package:
         self.grouped_with = grouped_with
         self.required_truck = required_truck
         self.available_at = available_at
-        self.corrected_address = corrected_address
-        self.corrected_zip_code = corrected_zip_code
+        self.address_is_valid = address_is_valid
+        
 
         self.assigned_truck = assigned_truck
         self.departure_time = departure_time
@@ -54,7 +53,7 @@ class Package:
     def mark_en_route(self, time):
         self.status = PackageStatus.EN_ROUTE
         self.departure_time = time
-        
+
     def mark_delivered(self, time):
         self.status = PackageStatus.DELIVERED
         self.delivered_time = time
