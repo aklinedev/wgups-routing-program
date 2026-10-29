@@ -3,7 +3,7 @@ from package import PackageStatus
 def build_load(packages, truck, current_time):
 
     load = []
-    sorted_packages = _sort_by_deadline(packages)
+    sorted_packages = _sort_packages(packages, truck)
 
     for package in sorted_packages:
         remaining_capacity = truck.capacity - len(load)
@@ -74,7 +74,9 @@ def _can_grouped_packages_fit(group, remaining_capacity):
     return len(group) <= remaining_capacity
 
 
-def _sort_by_deadline(packages):
-    # This means for each package, use its deadline as the value to sort by.
-    return sorted(packages, key=lambda package: package.deadline)
+def _sort_packages(packages, truck):
+    return sorted(
+        packages, key=lambda package: 
+        (package.deadline, 0 if package.required_truck == truck.id else 1)
+    )
 

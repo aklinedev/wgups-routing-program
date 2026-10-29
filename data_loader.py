@@ -24,7 +24,7 @@ def load_packages(file_path):
 
     for row in rows:
         package_id, address, city, state, zip_code, deadline, weight, special_note = row
-        print(deadline, type(deadline))
+        address = _normalize_address(address)
         package = Package(
             package_id,
             address,
@@ -42,7 +42,7 @@ def load_packages(file_path):
 
     return packages
         
-    
+
 def _parse_special_notes(package):
     if not package.special_note:
         return
@@ -95,6 +95,7 @@ def load_distance_data(file_path):
 )
     for row in rows:
         address = row[0].split("\n")[0].strip()
+        address = _normalize_address(address)
         address_mapping[address] = address_count
         address_count += 1
 
@@ -124,3 +125,16 @@ def _parse_deadline(package):
         package.deadline = 1440
     else:
         package.deadline = _time_to_minutes(package.deadline)
+
+# During main call, address on the packages and parsed data from the
+# delivery locations where not equal strings. Parsed data used N/E/S/W while
+# packages used North/East/South/West on addresses. This is used to convert.
+def _normalize_address(address):
+    return (
+        address
+        .replace(" South ", " S ")
+        .replace(" North ", " N ")
+        .replace(" East ", " E ")
+        .replace(" West ", " W ")
+        .strip()
+    )

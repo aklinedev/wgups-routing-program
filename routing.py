@@ -24,13 +24,24 @@ def run_route(truck, address_mapping, distance_matrix):
     current_time = truck.departure_time
     # Goes until the truck is empty.
     while truck.packages:
-        # Helper call to find closest package.
+    # Prioritize packages with an actual deadline before EOD packages.
+        deadline_packages = [
+            package
+            for package in truck.packages
+            if package.deadline < 1440
+        ]
+
+        if deadline_packages:
+            candidates = deadline_packages
+        else:
+            candidates = truck.packages
+
         closest_package, closest_distance = _find_closest_package(
             truck.current_location,
-            truck.packages,
+            candidates,
             address_mapping,
             distance_matrix
-        )
+    )
         # Update time, mileage, location, and remove package from truck.
         travel_time = _calculate_travel_time(closest_distance)
         current_time += travel_time
