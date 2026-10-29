@@ -5,8 +5,11 @@ from data_loader import load_packages, load_distance_data
 from package_scheduler import build_load
 from routing import run_route, _calculate_travel_time
 from package import PackageStatus
+from reporting import display_package, display_all_packages
 
-
+# The pre-built supervisor methods can be found at the bottom.
+# I've commented them out, one is for single packge query at X time;
+# The other is for all packages at X time.
 
 # Constants / program data --------------------------------------------------------
 
@@ -39,7 +42,6 @@ drivers = [
     driver_1,
     driver_2
 ]
-
 
 # Create trucks --------------------------------------------------------
 
@@ -75,7 +77,7 @@ fleet = Fleet(
     START_TIME
 )
 
-# Package #9 correction --------------------------------------------------------
+# This is for package #9 correction --------------------------------------------------------
 
 def correct_package_9():
     package_9 = packages.get(9)
@@ -87,7 +89,8 @@ def correct_package_9():
     package_9.address_is_valid = True
 
 # Time event helper --------------------------------------------------------
-
+# This checks whether the simulation has reached a
+# time where something in the data should change
 def apply_time_events(current_time):
     package_9 = packages.get(9)
 
@@ -98,7 +101,8 @@ def apply_time_events(current_time):
         correct_package_9()
 
 # Delivery check helper --------------------------------------------------------
-
+# This helper loops through every package and checks its status.
+# It returns True is all packages are deliverd, and False otherwise.
 def all_packages_delivered():
     for package in packages:
         if package.status != PackageStatus.DELIVERED:
@@ -316,8 +320,6 @@ total_mileage = sum(
 
 print(f"Total mileage: {total_mileage:.1f}")
 
-# Validation --------------------------------------------------------
-
 delivered_count = 0
 for package in packages:
     if package.status == PackageStatus.DELIVERED:
@@ -333,3 +335,23 @@ print(
     f"{delivered_count}/40"
 )
 
+# Supervisor methods --------------------------------------------------------
+
+# Please note: query time must be in minutes after midnight. 
+
+# For single package query, put your disired package ID + query time.
+
+# For all packages at a given time, put your disired query time.
+
+package_id = 9
+query_time = 600
+
+#####
+#
+# package = packages.get(package_id)
+#if package is not None:
+#    display_package( package, query_time)
+#
+#display_all_packages(packages, query_time) 
+#
+#####
