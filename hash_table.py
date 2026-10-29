@@ -1,7 +1,7 @@
 from chain_node import ChainNode
 
 # For my custom hash table, I chose to use chaining for handling 
-# collisions ; which is why im using it to store my custom chain nodes.
+# collisions ; which is why I'm using it to store my custom chain nodes.
 class HashTable:
     def __init__(self, size):
         # The bucket count scales with the expected number of entries.
@@ -11,7 +11,7 @@ class HashTable:
         self.table =  [None] * self.size
 
     # The hash function is used to map objects based
-    # on there key, then MOD the size of the table. Ideally this
+    # on their key, then MOD the size of the table. Ideally this
     # is a prime number to help even distribution.
 
     def custom_hash(self, key):
