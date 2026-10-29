@@ -6,7 +6,7 @@
 from openpyxl import load_workbook
 from package import Package
 from hash_table import HashTable
-from datetime import datetime
+from datetime import datetime, time
 
 # Loads the package data into a custom hash table, deals with special
 # notes explicitly with a helper.
@@ -24,7 +24,7 @@ def load_packages(file_path):
 
     for row in rows:
         package_id, address, city, state, zip_code, deadline, weight, special_note = row
-
+        print(deadline, type(deadline))
         package = Package(
             package_id,
             address,
@@ -37,6 +37,7 @@ def load_packages(file_path):
     )
         
         _parse_special_notes(package)
+        _parse_deadline(package)
         packages.insert(package.id, package)
 
     return packages
@@ -71,8 +72,11 @@ def _parse_special_notes(package):
 
 
 # Use this helper to convert any given time 12 hour in the format of HH:MM am/pm.
-def _time_to_minutes(time_string):
-    parsed_time = datetime.strptime(time_string.strip(), "%I:%M %p")
+def _time_to_minutes(time_value):
+    if isinstance(time_value, time):
+        return time_value.hour * 60 + time_value.minute
+
+    parsed_time = datetime.strptime(time_value.strip(), "%I:%M %p")
     return parsed_time.hour * 60 + parsed_time.minute
 
 # This returns two objects, one containing the mapping of addresses to indices.
@@ -106,7 +110,17 @@ def load_distance_data(file_path):
         for column_index, distance in enumerate(row):
             if distance is not None:
                 distance = round(distance, 1)
+                # Since A -> B is the same distance as B -> A, we
+                # populate both directions each pass.
                 distance_matrix[row_index][column_index] = distance
                 distance_matrix[column_index][row_index] = distance
 
     return address_mapping, distance_matrix
+
+# To get consistency with deadline types, we convert everything
+# to minutes after midnight, including EOD.
+def _parse_deadline(package):
+    if package.deadline == "EOD":
+        package.deadline = 1440
+    else:
+        package.deadline = _time_to_minutes(package.deadline)
