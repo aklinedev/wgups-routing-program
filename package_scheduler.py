@@ -17,7 +17,7 @@ def build_load(packages, truck, current_time):
             continue
 
         # Checking basic eligiblity of packages
-        if not _is_eligible_package(package, truck, current_time):
+        if not _is_eligible_package(package, truck):
             continue
 
         # This if block handles grouped packages by calling helpers to
@@ -28,7 +28,7 @@ def build_load(packages, truck, current_time):
                 continue
             if not _can_grouped_packages_fit(group, remaining_capacity):
                 continue
-            if not all(_is_eligible_package(p, truck, current_time) for p in group):
+            if not all(_is_eligible_package(p, truck) for p in group):
                 continue
             for grouped_package in group:
                 if grouped_package not in load:
@@ -41,17 +41,14 @@ def build_load(packages, truck, current_time):
     return load
 
 
-def _is_eligible_package(package, truck, current_time):
+def _is_eligible_package(package, truck):
+
     if package.status is not PackageStatus.AT_HUB:
         return False
-    
-    if package.available_at is not None:
-        if package.available_at > current_time:
-                return False
-        
+
     if not package.address_is_valid:
         return False
-    
+
     if package.required_truck is not None:
         if package.required_truck != truck.id:
             return False

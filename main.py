@@ -92,6 +92,20 @@ def correct_package_9():
 # This checks whether the simulation has reached a
 # time where something in the data should change
 def apply_time_events(current_time):
+
+    # Move delayed packages to the hub once
+    # their availability time has been reached.
+    for package in packages:
+
+        if (
+            package.status == PackageStatus.DELAYED
+            and package.available_at is not None
+            and current_time >= package.available_at
+        ):
+            package.status = PackageStatus.AT_HUB
+
+
+    # Package #9 address correction.
     package_9 = packages.get(9)
 
     if (
@@ -187,6 +201,8 @@ fleet.dispatch(
     START_TIME
 )
 
+apply_time_events(DELAYED_TIME)
+
 
 load_2 = build_load(
     packages,
@@ -202,7 +218,7 @@ fleet.dispatch(
     DELAYED_TIME
 )
 
-# Both trucks leave at 8:00 AM --------------------------------------------------------
+# Run the initial routes --------------------------------------------------------
 
 truck_1_finish = run_route(
     truck_1,

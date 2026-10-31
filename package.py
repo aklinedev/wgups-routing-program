@@ -2,6 +2,7 @@ from enum import Enum
 
 # Defining what a package status represents
 class PackageStatus(Enum):
+    DELAYED = "DELAYED"
     AT_HUB = "AT_HUB"
     EN_ROUTE = "EN_ROUTE"
     DELIVERED = "DELIVERED"

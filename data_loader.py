@@ -4,7 +4,7 @@
 
 # Using load_workbook from openpyxl to parse data.
 from openpyxl import load_workbook
-from package import Package
+from package import Package, PackageStatus
 from hash_table import HashTable
 from datetime import datetime, time
 
@@ -58,6 +58,7 @@ def _parse_special_notes(package):
     elif "Delayed" in package.special_note:
         time_string = package.special_note.split("until ")[1]
         package.available_at = _time_to_minutes(time_string)
+        package.status = PackageStatus.DELAYED
 
     # Must be delivered with x,y,...,z detected by the string "Must be delivered with".
     # Extracts the package IDs listed after "with", separated by commas

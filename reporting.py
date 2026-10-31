@@ -8,6 +8,12 @@ from package import PackageStatus
 # at the requested point in simulated time.
 def get_status_at_time(package, query_time):
 
+    if (
+        package.available_at is not None
+        and query_time < package.available_at
+    ):
+        return PackageStatus.DELAYED
+
     if package.departure_time is None:
         return PackageStatus.AT_HUB
 
