@@ -53,6 +53,7 @@ class Fleet:
         
         truck.depart(time)
         for package in truck.packages:
+            package.assigned_truck = truck.id
             package.mark_en_route(time)
 
         return True

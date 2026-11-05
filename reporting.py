@@ -1,9 +1,5 @@
 from package import PackageStatus
 
-# This is the "Supervisor Function". This module
-# is imported to main, and I have made two lookup
-# calls at the bottom of main, they are commented out.
-
 # Returns what the package's status would have been
 # at the requested point in simulated time.
 def get_status_at_time(package, query_time):
@@ -33,16 +29,34 @@ def display_package(package, query_time):
 
     status = get_status_at_time(package, query_time)
 
+    address, zip_code = get_address_at_time(package, query_time)
+
+    assigned_truck = "Not assigned"
+
+    if (
+        package.departure_time is not None
+        and query_time >= package.departure_time
+    ):
+        assigned_truck = package.assigned_truck
+
+
+    delivered_time = (
+        format_time(package.delivered_time)
+        if status == PackageStatus.DELIVERED
+        else "N/A"
+    )
+
     print(
         f"Package {package.id} | "
-        f"Address: {package.address} | "
+        f"Address: {address} | "
         f"City: {package.city} | "
         f"State: {package.state} | "
-        f"Zip: {package.zip_code} | "
-        f"Deadline: {format_time(package.deadline)} | "
+        f"Zip: {zip_code} | "
+        f"Deadline: {format_deadline(package.deadline)} | "
         f"Weight: {package.weight} | "
         f"Status: {status.value} | "
-        f"Delivered: {format_time(package.delivered_time)}"
+        f"Assigned Truck: {assigned_truck} | "
+        f"Delivered: {delivered_time}"
     )
 
 # Displays every package at a requested time.
@@ -72,3 +86,18 @@ def format_deadline(deadline):
         return "EOD"
 
     return format_time(deadline)
+
+def get_address_at_time(package, query_time):
+
+    # If the address was corrected after the requested time,
+    # return the original address and ZIP code.
+    if (
+        package.address_corrected_at is not None
+        and query_time < package.address_corrected_at
+    ):
+        return (
+            package.original_address,
+            package.original_zip_code
+        )
+
+    return package.address, package.zip_code

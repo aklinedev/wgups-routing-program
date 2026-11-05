@@ -41,6 +41,10 @@ class Package:
         self.special_note = special_note
         self.status = status
 
+        self.original_address = address
+        self.original_zip_code = zip_code
+        self.address_corrected_at = None
+        
         self.grouped_with = grouped_with
         self.required_truck = required_truck
         self.available_at = available_at

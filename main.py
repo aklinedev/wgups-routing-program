@@ -7,9 +7,6 @@ from routing import run_route, _calculate_travel_time
 from package import PackageStatus
 from reporting import display_package, display_all_packages
 
-# The pre-built supervisor methods can be found at the bottom.
-# I've commented them out, one is for single packge query at X time;
-# The other is for all packages at X time.
 
 # Constants / program data --------------------------------------------------------
 
@@ -86,6 +83,7 @@ def correct_package_9():
     package_9.city = "Salt Lake City"
     package_9.state = "UT"
     package_9.zip_code = "84111"
+    package_9.address_corrected_at = ADDRESS_FIX_TIME
     package_9.address_is_valid = True
 
 # Time event helper --------------------------------------------------------
@@ -353,21 +351,69 @@ print(
 
 # Supervisor methods --------------------------------------------------------
 
-# Please note: query time must be in minutes after midnight. 
+def get_query_time():
+    while True:
+        time_input = input("Enter query time (HH:MM, 24-hour format): ").strip()
 
-# For single package query, put your disired package ID + query time.
+        try:
+            hours, minutes = map(int, time_input.split(":"))
+            if (
+                0 <= hours <= 23
+                and 0 <= minutes <= 59
+            ):
+                return hours * 60 + minutes
 
-# For all packages at a given time, put your disired query time.
+            print("Invalid time. Please enter a valid time.")
 
-package_id = 9
-query_time = 600
+        except ValueError:
+            print("Invalid format. Example: 10:20 or 13:12")
 
-#####
-#
-# package = packages.get(package_id)
-#if package is not None:
-#    display_package( package, query_time)
-#
-#display_all_packages(packages, query_time) 
-#
-#####
+
+def run_tracking_interface():
+
+    while True:
+        print("\n========== WGUPS PACKAGE TRACKING ==========")
+        print("1. Look up a package")
+        print("2. View all packages")
+        print("3. Exit")
+
+        choice = input("\nSelect an option: ").strip()
+
+        if choice == "1":
+
+            try:
+                package_id = int(input("Enter package ID: "))
+            except ValueError:
+                print("Please enter a valid package ID.")
+                continue
+
+            package = packages.get(package_id)
+
+            if package is None:
+                print(f"Package {package_id} was not found.")
+                continue
+
+            query_time = get_query_time()
+
+            display_package(package, query_time)
+
+        elif choice == "2":
+
+            query_time = get_query_time()
+
+            display_all_packages(
+                packages,
+                query_time
+            )
+
+        elif choice == "3":
+            print("Exiting package tracking.")
+            break
+
+        else:
+            print("Invalid selection. Please choose 1, 2, or 3.")
+
+
+# Start supervisor interface --------------------------------------------------
+
+run_tracking_interface()
